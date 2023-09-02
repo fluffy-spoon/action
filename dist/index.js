@@ -17867,10 +17867,10 @@ async function getProjectVersion(project) {
 async function handleDotNet() {
     (0, helpers_1.logDebug)('scanning for solutions');
     var solutionFiles = await (0, helpers_1.globSearch)("**/*.sln");
-    (0, helpers_1.logDebug)('solutions found', solutionFiles);
+    (0, helpers_1.logInfo)('solutions found', solutionFiles);
     for (let solutionFile of solutionFiles) {
         let projects = await solution_file_parser_1.default.getProjects(solutionFile);
-        (0, helpers_1.logDebug)('projects detected', solutionFile, projects);
+        (0, helpers_1.logInfo)('publishing projects', solutionFile, projects);
         let testProjects = projects.filter(x => x.isTestProject);
         for (let project of testProjects) {
             await dotnetBuild(project.csprojFilePath);
@@ -18087,7 +18087,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.logDebug = exports.logError = exports.fail = exports.runProcess = exports.downloadFile = exports.globSearch = void 0;
+exports.logInfo = exports.logDebug = exports.logError = exports.fail = exports.runProcess = exports.downloadFile = exports.globSearch = void 0;
 const glob_1 = __nccwpck_require__(3277);
 const fs_1 = __importDefault(__nccwpck_require__(7147));
 const http_1 = __importDefault(__nccwpck_require__(3685));
@@ -18140,6 +18140,10 @@ function logDebug(...params) {
     (0, core_1.debug)(JSON.stringify(params));
 }
 exports.logDebug = logDebug;
+function logInfo(...params) {
+    (0, core_1.info)(JSON.stringify(params));
+}
+exports.logInfo = logInfo;
 
 
 /***/ }),
@@ -18192,10 +18196,10 @@ async function handleNodeJs() {
     packageJsFiles = packageJsFiles
         .sort((a, b) => b.length - a.length)
         .filter(x => !!packageJsFiles.find(y => y === x || y.indexOf(x) > -1));
-    (0, helpers_1.logDebug)('nodejs projects filtered', packageJsFiles);
+    (0, helpers_1.logInfo)('nodejs projects found', packageJsFiles);
     for (let packageJsFile of packageJsFiles) {
         let project = package_json_parser_1.default.readPackage(packageJsFile);
-        (0, helpers_1.logDebug)('project detected', packageJsFile, project);
+        (0, helpers_1.logInfo)('publishing project', packageJsFile, project);
         await npmCommand(project, 'install');
         if (project.hasBuildCommand)
             await npmCommand(project, 'run', 'build');

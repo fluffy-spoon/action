@@ -1,0 +1,12 @@
+{
+  "name": "node",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo test script was invoked",
+    "build": "echo build script was invoked"
+  },
+  "author": "",
+  "license": "ISC"
+}
