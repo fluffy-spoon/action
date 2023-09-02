@@ -18008,7 +18008,6 @@ exports["default"] = SolutionFileParser;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.getGitHubContext = void 0;
 const github_1 = __nccwpck_require__(5438);
-const core_1 = __nccwpck_require__(2186);
 const helpers_1 = __nccwpck_require__(3015);
 var KnownGitHubEnvironmentKey;
 (function (KnownGitHubEnvironmentKey) {
@@ -18030,7 +18029,10 @@ async function getGitHubContext() {
     if (cachedContextPromise)
         return await cachedContextPromise;
     cachedContextPromise = new Promise(async (resolve) => {
-        const token = (0, core_1.getInput)('gitHubToken', { required: true });
+        const token = process.env["GITHUB_TOKEN"];
+        if (!token) {
+            throw new Error("No GitHub token provided. Provide one with the input 'gitHubToken'.");
+        }
         (0, helpers_1.logDebug)("got token with length", token.length);
         let environment = {};
         for (let key in KnownGitHubEnvironmentKey) {
