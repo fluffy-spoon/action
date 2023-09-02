@@ -1,7 +1,7 @@
-import {GitHub} from '@actions/github';
+import {getOctokit} from '@actions/github';
 import { getInput } from '@actions/core';
 
-import { ReposGetResponse, UsersGetByUsernameResponse, ReposGetLatestReleaseResponse } from '@octokit/rest';
+import { RestEndpointMethodTypes } from '@octokit/rest';
 import { logDebug } from './helpers';
 
 enum KnownGitHubEnvironmentKey {
@@ -23,11 +23,11 @@ export type KnownGitHubEnvironmentKeyObject = {
 }
 
 export type GitHubContext = {
-    client: GitHub,
+    client: ReturnType<typeof getOctokit>,
     environment: KnownGitHubEnvironmentKeyObject,
-    repository: ReposGetResponse,
-    owner: UsersGetByUsernameResponse,
-    latestRelease: ReposGetLatestReleaseResponse | null,
+    repository: RestEndpointMethodTypes["repos"]["get"]["response"]["data"],
+    owner: RestEndpointMethodTypes["users"]["getByUsername"]["response"]["data"],
+    latestRelease: RestEndpointMethodTypes["repos"]["getLatestRelease"]["response"]["data"] | null,
     token: string,
     shouldPublish: boolean
 };
@@ -60,27 +60,27 @@ export async function getGitHubContext(): Promise<GitHubContext> {
 
         let [owner, repo] = environment.REPOSITORY.split('/');
 
-        let client = new GitHub(token);
+        let client = getOctokit(token);
 
-        let userResponse = await client.users.getByUsername({
+        let userResponse = await client.rest.users.getByUsername({
             username: owner
         });
 
-        let repositoryResponse = await client.repos.get({
+        let repositoryResponse = await client.rest.repos.get({
             owner,
             repo
         });
 
-        let latestReleaseResponse = await client.repos.getLatestRelease({
+        let latestReleaseResponse = await client.rest.repos.getLatestRelease({
             owner,
             repo
         }).catch(() => null);
 
         let context: GitHubContext = {
             client,
-            repository: repositoryResponse.data,
             owner: userResponse.data,
             latestRelease: latestReleaseResponse && latestReleaseResponse.data,
+            repository: repositoryResponse.data as GitHubContext["repository"],
             environment,
             token,
             shouldPublish: !!token

@@ -1,4 +1,4 @@
-import glob from 'glob';
+import {glob} from 'glob';
 import fs from 'fs';
 import http from 'http';
 
@@ -15,18 +15,11 @@ export async function globSearch(pattern: string, ignore?: string[]) {
     logDebug('begin-glob', pattern);
 
     let context = await getGitHubContext();
-    return new Promise<string[]>((resolve, reject) =>
-        glob(join(context.environment.WORKSPACE, pattern), {
+    return await glob(
+        join(context.environment.WORKSPACE, pattern), 
+        {
             ignore: ignore || []
-        }, (err, files) => {
-            if (err) {
-                logDebug('err-glob', pattern, err);
-                return reject(err);
-            }
-
-            logDebug('end-glob', pattern, files);
-            return resolve(files);
-        }));
+        });
 }
 
 export async function downloadFile(localFilePath: string, url: string) {
