@@ -1,4 +1,4 @@
-import { logDebug, globSearch, runProcess } from "../helpers";
+import { logDebug, globSearch, runProcess, logInfo } from "../helpers";
 import PackageJsonParser, { NodeJsPackage } from "./package-json-parser";
 
 async function npmCommand(project: NodeJsPackage, ...commandArgs: string[]) {
@@ -23,11 +23,11 @@ export default async function handleNodeJs() {
         .sort((a, b) => b.length - a.length)
         .filter(x => !!packageJsFiles.find(y => y === x || y.indexOf(x) > -1));
 
-    logDebug('nodejs projects filtered', packageJsFiles);
+    logInfo('nodejs projects found', packageJsFiles);
 
     for (let packageJsFile of packageJsFiles) {
         let project = PackageJsonParser.readPackage(packageJsFile);
-        logDebug('project detected', packageJsFile, project);
+        logInfo('publishing project', packageJsFile, project);
         
         await npmCommand(project, 'install');
 

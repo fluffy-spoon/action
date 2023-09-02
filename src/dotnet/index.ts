@@ -4,7 +4,7 @@ import SolutionFileParser from './solution-file-parser';
 import xml2js from 'xml2js';
 
 import { getGitHubContext } from '../environment';
-import { globSearch, logDebug, runProcess } from '../helpers';
+import { globSearch, logDebug, logInfo, runProcess } from '../helpers';
 import { Project } from './project-file-parser';
 import { writeFileSync, readFileSync, existsSync, mkdirSync } from 'fs';
 import { error } from '@actions/core';
@@ -166,11 +166,11 @@ export default async function handleDotNet() {
     logDebug('scanning for solutions');
 
     var solutionFiles = await globSearch("**/*.sln");
-    logDebug('solutions found', solutionFiles);
+    logInfo('solutions found', solutionFiles);
 
     for (let solutionFile of solutionFiles) {
         let projects = await SolutionFileParser.getProjects(solutionFile);
-        logDebug('projects detected', solutionFile, projects);
+        logInfo('publishing projects', solutionFile, projects);
 
         let testProjects = projects.filter(x => x.isTestProject);
         for(let project of testProjects) {

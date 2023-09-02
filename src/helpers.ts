@@ -6,7 +6,7 @@ import { join } from "path";
 
 import { getGitHubContext } from './environment';
 
-import { setFailed, debug, error } from '@actions/core';
+import { setFailed, debug, error, info } from '@actions/core';
 import { exec } from '@actions/exec';
 
 import { ExecOptions } from '@actions/exec/lib/interfaces';
@@ -59,4 +59,8 @@ export function logError(...params: any[]) {
 
 export function logDebug(...params: any[]) {
     debug(JSON.stringify(params));
+}
+
+export function logInfo(...params: any[]) {
+    info(JSON.stringify(params));
 }
