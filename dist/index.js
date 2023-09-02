@@ -17830,6 +17830,9 @@ async function generateNuspecFileForProject(project) {
         topics.join(', ') :
         ''}
                 </tags>
+                <files>
+                    <file src="README.md" target="\" />
+                </files>
                 <dependencies>
                     ${project.packageReferences
         .map(x => `<dependency id="${x.name}" version="${x.version}" />`)
