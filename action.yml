@@ -7,7 +7,6 @@ inputs:
     required: true
 runs:
   using: 'composite'
-  main: 'dist/index.js'
   steps:
     - uses: actions/checkout@latest
 
@@ -18,3 +17,5 @@ runs:
     - uses: actions/setup-node@latest
       with:
         node-version: 'latest'
+
+    - run: node dist/index.js
