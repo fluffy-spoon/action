@@ -3,10 +3,8 @@ import { fail } from "./helpers";
 import handleNodeJs from "./nodejs";
 
 async function run() {
-    await Promise.all([
-        handleNodeJs(),
-        handleDotNet()
-    ]);
+    await handleNodeJs();
+    await handleDotNet();
 }
 
 run().catch(fail);
