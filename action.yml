@@ -1,4 +1,4 @@
-name: 'Compile & publish NuGet package'
+name: 'FluffySpoon publishing'
 description: 'One-step CI/DI as well as deployment for C# and NodeJS projects.'
 author: 'ffMathy'
 inputs:

@@ -31,7 +31,7 @@ export async function globSearch(pattern: string, ignore?: string[]) {
 
 export async function downloadFile(localFilePath: string, url: string) {
     var file = fs.createWriteStream(localFilePath);
-    return new Promise((resolve, reject) => {
+    return new Promise<void>((resolve, reject) => {
         http.get(url, function (response) {
             response.pipe(file);
             file.on('finish', function () {
