@@ -39,6 +39,9 @@ export async function getGitHubContext(): Promise<GitHubContext> {
 
     cachedContextPromise = new Promise<GitHubContext>(async (resolve) => {
         const token = getInput('gitHubToken');
+        if(!token) {
+            throw new Error("No GitHub token provided. Provide one with the input 'gitHubToken'.")
+        }
 
         let environment: KnownGitHubEnvironmentKeyObject = {} as any;
         for(let key in KnownGitHubEnvironmentKey) {
