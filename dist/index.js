@@ -18153,15 +18153,15 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.run = void 0;
 const dotnet_1 = __importDefault(__nccwpck_require__(4562));
-const helpers_1 = __nccwpck_require__(3015);
 const nodejs_1 = __importDefault(__nccwpck_require__(50));
 async function run() {
     await (0, nodejs_1.default)();
     await (0, dotnet_1.default)();
 }
-run().catch(helpers_1.fail);
-exports["default"] = run;
+exports.run = run;
+run();
 
 
 /***/ }),
