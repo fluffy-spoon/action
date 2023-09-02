@@ -1,27 +1,18 @@
 import handleDotNet from "./dotnet";
 import { fail, runProcess } from "./helpers";
+import * as gitSourceProvider from './git/checkout/src/git-source-provider';
+import * as inputHelper from './git/checkout/src/input-helper';
 import handleNodeJs from "./nodejs";
 import { getGitHubContext } from "./environment";
-import { ExecOptions } from "@actions/exec/lib/interfaces";
-import { join } from "path";
-
-async function gitCommand(cwd: string, args: string[]) {
-    let github = await getGitHubContext();
-    return await runProcess('/usr/bin/git', args, {
-        cwd
-    });
-}
 
 async function gitCheckout() {
-    let github = await getGitHubContext();
+    const context = await getGitHubContext();
 
-    await gitCommand(
-        github.environment.WORKSPACE, 
-        ['clone', '--recursive', `https://${github.owner.login}:${github.token}@github.com/${github.owner.login}/${github.repository.name}.git`]);
-    
-    await gitCommand(
-        join(github.environment.WORKSPACE, github.repository.name), 
-        ['submodule', 'update', '--init', '--recursive']);
+    await gitSourceProvider.getSource({
+        ...await inputHelper.getInputs(),
+        submodules: true,
+        authToken: context.token
+    });
 }
 
 async function run() {

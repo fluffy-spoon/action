@@ -2,6 +2,7 @@ import {GitHub} from '@actions/github';
 import { getInput } from '@actions/core';
 
 import { ReposGetResponse, UsersGetByUsernameResponse, ReposGetLatestReleaseResponse } from '@octokit/rest';
+import { logDebug } from './helpers';
 
 enum KnownGitHubEnvironmentKey {
     WORKFLOW,
@@ -43,7 +44,7 @@ export async function getGitHubContext(): Promise<GitHubContext> {
             throw new Error("No GitHub token provided. Provide one with the input 'gitHubToken'.")
         }
 
-        console.debug("got token with length", token.length)
+        logDebug("got token with length", token.length)
 
         let environment: KnownGitHubEnvironmentKeyObject = {} as any;
         for(let key in KnownGitHubEnvironmentKey) {
