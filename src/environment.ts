@@ -43,6 +43,8 @@ export async function getGitHubContext(): Promise<GitHubContext> {
             throw new Error("No GitHub token provided. Provide one with the input 'gitHubToken'.")
         }
 
+        console.debug("got token with length", token.length)
+
         let environment: KnownGitHubEnvironmentKeyObject = {} as any;
         for(let key in KnownGitHubEnvironmentKey) {
             if(!isNaN(+key))
