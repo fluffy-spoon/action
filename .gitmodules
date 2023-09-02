@@ -4,3 +4,6 @@
 [submodule "src/nodejs/setup-node"]
 	path = src/nodejs/setup-node
 	url = https://github.com/actions/setup-node
+[submodule "src/git/checkout"]
+	path = src/git/checkout
+	url = https://github.com/actions/checkout.git
