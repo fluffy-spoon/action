@@ -193,8 +193,8 @@ export default async function handleDotNet() {
         for(let project of nonTestProjects) {
             try {
                 await dotnetNuGetPush(project);
-            } catch(ex) {
-                error(ex.message);
+            } catch(ex: any) {
+                error('message' in ex ? ex?.message : ex);
             }
         }
     }
@@ -208,5 +208,5 @@ async function installDotNet() {
         join(__dirname, '..', 'externals'));
 
     let dotnetInstaller = await import('./setup-dotnet/src/installer');
-    await new dotnetInstaller.DotnetCoreInstaller('3.0.100').installDotnet();
+    await new dotnetInstaller.DotnetCoreInstaller('3.0.100', "validated").installDotnet();
 }

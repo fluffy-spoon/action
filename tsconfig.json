@@ -5,7 +5,8 @@
     "outDir": "./lib",
     "rootDir": "./src",
     "moduleResolution": "node",
-    "strict": false,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
     "noImplicitAny": false,
     "esModuleInterop": true,
     "noEmitOnError": false
