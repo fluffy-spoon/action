@@ -39,11 +39,7 @@ export async function getGitHubContext(): Promise<GitHubContext> {
         return await cachedContextPromise;
 
     cachedContextPromise = new Promise<GitHubContext>(async (resolve) => {
-        const token = getInput('gitHubToken');
-        if(!token) {
-            throw new Error("No GitHub token provided. Provide one with the input 'gitHubToken'.")
-        }
-
+        const token = getInput('gitHubToken', { required: true });
         logDebug("got token with length", token.length)
 
         let environment: KnownGitHubEnvironmentKeyObject = {} as any;
