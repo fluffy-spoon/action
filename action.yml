@@ -19,3 +19,4 @@ runs:
         node-version: 'latest'
 
     - run: node dist/index.js
+      shell: bash
