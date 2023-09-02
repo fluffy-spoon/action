@@ -62,15 +62,18 @@ export async function getGitHubContext(): Promise<GitHubContext> {
 
         let client = getOctokit(token);
 
+        logDebug("fetching user")
         let userResponse = await client.rest.users.getByUsername({
             username: owner
         });
 
+        logDebug("fetching repository")
         let repositoryResponse = await client.rest.repos.get({
             owner,
             repo
         });
 
+        logDebug("fetching latest release")
         let latestReleaseResponse = await client.rest.repos.getLatestRelease({
             owner,
             repo
@@ -86,6 +89,7 @@ export async function getGitHubContext(): Promise<GitHubContext> {
             shouldPublish: !!token
         };
 
+        logDebug("context fetched")
         resolve(context);
     });
 

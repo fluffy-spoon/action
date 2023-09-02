@@ -18045,13 +18045,16 @@ async function getGitHubContext() {
         }
         let [owner, repo] = environment.REPOSITORY.split('/');
         let client = (0, github_1.getOctokit)(token);
+        (0, helpers_1.logDebug)("fetching user");
         let userResponse = await client.rest.users.getByUsername({
             username: owner
         });
+        (0, helpers_1.logDebug)("fetching repository");
         let repositoryResponse = await client.rest.repos.get({
             owner,
             repo
         });
+        (0, helpers_1.logDebug)("fetching latest release");
         let latestReleaseResponse = await client.rest.repos.getLatestRelease({
             owner,
             repo
@@ -18065,6 +18068,7 @@ async function getGitHubContext() {
             token,
             shouldPublish: !!token
         };
+        (0, helpers_1.logDebug)("context fetched");
         resolve(context);
     });
     return await cachedContextPromise;
@@ -18094,9 +18098,11 @@ const exec_1 = __nccwpck_require__(1514);
 async function globSearch(pattern, ignore) {
     logDebug('begin-glob', pattern);
     let context = await (0, environment_1.getGitHubContext)();
-    return await (0, glob_1.glob)((0, path_1.join)(context.environment.WORKSPACE, pattern), {
+    const files = await (0, glob_1.glob)((0, path_1.join)(context.environment.WORKSPACE, pattern), {
         ignore: ignore || []
     });
+    logDebug('end-glob', files);
+    return files;
 }
 exports.globSearch = globSearch;
 async function downloadFile(localFilePath, url) {

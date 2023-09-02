@@ -15,11 +15,15 @@ export async function globSearch(pattern: string, ignore?: string[]) {
     logDebug('begin-glob', pattern);
 
     let context = await getGitHubContext();
-    return await glob(
+    const files = await glob(
         join(context.environment.WORKSPACE, pattern), 
         {
             ignore: ignore || []
         });
+        
+    logDebug('end-glob', files);
+
+    return files;
 }
 
 export async function downloadFile(localFilePath: string, url: string) {
