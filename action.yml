@@ -21,4 +21,4 @@ runs:
     - run: node dist/index.js
       shell: bash
       env:
-        GITHUB_TOKEN: ${{ toJSON(inputs) }}
+        GITHUB_TOKEN: ${{ inputs.gitHubToken }}
