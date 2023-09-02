@@ -8,13 +8,13 @@ inputs:
 runs:
   using: 'composite'
   steps:
-    - uses: actions/checkout@latest
+    - uses: actions/checkout@v3
 
-    - uses: actions/setup-dotnet@latest
+    - uses: actions/setup-dotnet@v3
       with:
         dotnet-version: 'latest'
 
-    - uses: actions/setup-node@latest
+    - uses: actions/setup-node@v3
       with:
         node-version: 'latest'
 
