@@ -1,15 +1,22 @@
+﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.31101.0
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dotnet", "dotnet.csproj", "{6E099E06-32E2-441F-B831-331ECB76FC4E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dotnet", "dotnet.csproj", "{2F19434C-8F14-4AB1-A8F7-80C651A49E8E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
-	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {131EFBB6-D070-404F-89C8-BFD611D9B7AF}
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2F19434C-8F14-4AB1-A8F7-80C651A49E8E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2F19434C-8F14-4AB1-A8F7-80C651A49E8E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2F19434C-8F14-4AB1-A8F7-80C651A49E8E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2F19434C-8F14-4AB1-A8F7-80C651A49E8E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
