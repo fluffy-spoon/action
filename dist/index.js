@@ -18200,6 +18200,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
+const environment_1 = __nccwpck_require__(6869);
 const helpers_1 = __nccwpck_require__(3015);
 const package_json_parser_1 = __importDefault(__nccwpck_require__(527));
 async function npmCommand(project, ...commandArgs) {
@@ -18215,6 +18216,9 @@ async function npmPublish(project) {
     }
     await npmCommand(project, 'set', '//registry.npmjs.org/:_authToken', npmToken);
     await npmCommand(project, 'publish', '--access', 'public');
+    const github = await (0, environment_1.getGitHubContext)();
+    await npmCommand(project, 'set', '//npm.pkg.github.com/:_authToken', github.token);
+    await npmCommand(project, 'publish');
 }
 async function handleNodeJs() {
     (0, helpers_1.logDebug)('scanning for nodejs projects');
