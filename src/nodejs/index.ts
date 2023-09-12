@@ -17,11 +17,13 @@ async function npmPublish(project: NodeJsPackage) {
     }
 
     await npmCommand(project, 'set', '//registry.npmjs.org/:_authToken', npmToken);
+    await npmCommand(project, 'set', '@fluffy-spoon:registry', "https://registry.npmjs.org");
     await npmCommand(project, 'publish', '--access', 'public');
 
     const github = await getGitHubContext();
     await npmCommand(project, 'set', '//npm.pkg.github.com/:_authToken', github.token);
-    await npmCommand(project, 'publish');
+    await npmCommand(project, 'set', '@fluffy-spoon:registry', "https://npm.pkg.github.com");
+    await npmCommand(project, 'publish', '--access', 'public');
 }
 
 export default async function handleNodeJs() {

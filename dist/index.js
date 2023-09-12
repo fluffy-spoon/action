@@ -18215,10 +18215,12 @@ async function npmPublish(project) {
         throw new Error("Could not find NPM token.");
     }
     await npmCommand(project, 'set', '//registry.npmjs.org/:_authToken', npmToken);
+    await npmCommand(project, 'set', '@fluffy-spoon:registry', "https://registry.npmjs.org");
     await npmCommand(project, 'publish', '--access', 'public');
     const github = await (0, environment_1.getGitHubContext)();
     await npmCommand(project, 'set', '//npm.pkg.github.com/:_authToken', github.token);
-    await npmCommand(project, 'publish');
+    await npmCommand(project, 'set', '@fluffy-spoon:registry', "https://npm.pkg.github.com");
+    await npmCommand(project, 'publish', '--access', 'public');
 }
 async function handleNodeJs() {
     (0, helpers_1.logDebug)('scanning for nodejs projects');
