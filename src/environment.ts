@@ -28,8 +28,7 @@ export type GitHubContext = {
     repository: RestEndpointMethodTypes["repos"]["get"]["response"]["data"],
     owner: RestEndpointMethodTypes["users"]["getByUsername"]["response"]["data"],
     latestRelease: RestEndpointMethodTypes["repos"]["getLatestRelease"]["response"]["data"] | null,
-    token: string,
-    shouldPublish: boolean
+    token: string
 };
 
 let cachedContextPromise: Promise<GitHubContext>;
@@ -85,8 +84,7 @@ export async function getGitHubContext(): Promise<GitHubContext> {
             latestRelease: latestReleaseResponse && latestReleaseResponse.data,
             repository: repositoryResponse.data as GitHubContext["repository"],
             environment,
-            token,
-            shouldPublish: !!token
+            token
         };
 
         logDebug("context fetched")

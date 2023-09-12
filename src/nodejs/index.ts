@@ -1,3 +1,4 @@
+import { getGitHubContext } from "../environment";
 import { logDebug, globSearch, runProcess, logInfo } from "../helpers";
 import PackageJsonParser, { NodeJsPackage } from "./package-json-parser";
 
@@ -10,7 +11,13 @@ async function npmCommand(project: NodeJsPackage, ...commandArgs: string[]) {
 }
 
 async function npmPublish(project: NodeJsPackage) {
-    
+    const npmToken = process.env["NPM_TOKEN"];
+    if(!npmToken) {
+        throw new Error("Could not find NPM token.");
+    }
+
+    await npmCommand(project, 'set', '//registry.npmjs.org/:_authToken', npmToken);
+    await npmCommand(project, 'publish', '--access', 'public');
 }
 
 export default async function handleNodeJs() {

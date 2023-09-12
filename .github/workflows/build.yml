@@ -17,3 +17,5 @@ jobs:
         uses: ./
         with:
           gitHubToken: ${{ github.token }}
+          npmToken: ${{ secrets.NPM_TOKEN }}
+          nugetToken: ${{ secrets.NUGET_TOKEN }}

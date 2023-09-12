@@ -5,6 +5,12 @@ inputs:
   gitHubToken:
     description: 'API key for GitHub'
     required: true
+  npmToken:
+    description: 'Token for publishing to NPM'
+    required: true
+  nugetToken:
+    description: 'Token for publishing to NuGet'
+    required: true
 runs:
   using: 'composite'
   steps:
@@ -22,3 +28,5 @@ runs:
       shell: bash
       env:
         GITHUB_TOKEN: ${{ inputs.gitHubToken }}
+        NPM_TOKEN: ${{ inputs.npmToken }}
+        NUGET_TOKEN: ${{ inputs.nugetToken }}

@@ -17773,34 +17773,53 @@ async function dotnetPack(project) {
     });
 }
 async function dotnetNuGetPush(project) {
+    const nugetToken = process.env["NUGET_TOKEN"];
+    if (!nugetToken) {
+        throw new Error("Could not find NuGet token.");
+    }
     let gitHub = await (0, environment_1.getGitHubContext)();
-    let nugetConfigContents = `<?xml version="1.0" encoding="utf-8"?>
+    await dotnetNuGetPushToFeed({
+        feed: `https://nuget.pkg.github.com/${gitHub.owner.login}/index.json`,
+        username: gitHub.repository.owner.login,
+        token: gitHub.token,
+        project
+    });
+    await dotnetNuGetPushToFeed({
+        feed: `https://api.nuget.org/v3/index.json`,
+        username: gitHub.repository.owner.login,
+        token: nugetToken,
+        project
+    });
+}
+async function dotnetNuGetPushToFeed(options) {
+    let nugetConfigContents = `
+        <?xml version="1.0" encoding="utf-8"?>
         <configuration>
-        <config>
-            <add key="DefaultPushSource" value="CustomFeed" />
-        </config>
-        <packageSources>
-            <add key="CustomFeed" value="https://nuget.pkg.github.com/${gitHub.owner.login}/index.json" />
-        </packageSources>
-        <packageSourceCredentials>
-            <CustomFeed>
-                <add key="Username" value="${gitHub.repository.owner.login}" />
-                <add key="ClearTextPassword" value="${gitHub.token}" />
-            </CustomFeed>
-        </packageSourceCredentials>
+            <config>
+                <add key="DefaultPushSource" value="CustomFeed" />
+            </config>
+            <packageSources>
+                <add key="CustomFeed" value="${options.feed}" />
+            </packageSources>
+            <packageSourceCredentials>
+                <CustomFeed>
+                    <add key="Username" value="${options.username}" />
+                    <add key="ClearTextPassword" value="${options.token}" />
+                </CustomFeed>
+            </packageSourceCredentials>
         </configuration>`;
     (0, helpers_1.logDebug)('writing nuget.config', nugetConfigContents);
-    (0, fs_1.writeFileSync)((0, path_1.join)(project.directoryPath, 'nuget.config'), nugetConfigContents);
-    (0, helpers_1.logDebug)('publishing package', project.nuspecFilePath);
-    let version = await getProjectVersion(project);
+    (0, fs_1.writeFileSync)((0, path_1.join)(options.project.directoryPath, 'nuget.config'), nugetConfigContents);
+    (0, helpers_1.logDebug)('publishing package', options.project.nuspecFilePath);
+    let version = await getProjectVersion(options.project);
     await (0, helpers_1.runProcess)("dotnet", [
         "nuget",
         "push",
-        (0, path_1.join)(project.directoryPath, `${project.name}.${version}.nupkg`),
+        (0, path_1.join)(options.project.directoryPath, `${options.project.name}.${version}.nupkg`),
         "--api-key",
-        gitHub.token
+        options.token
     ], {
-        cwd: project.directoryPath
+        cwd: options.project.directoryPath
     });
 }
 async function generateNuspecFileForProject(project) {
@@ -18068,8 +18087,7 @@ async function getGitHubContext() {
             latestRelease: latestReleaseResponse && latestReleaseResponse.data,
             repository: repositoryResponse.data,
             environment,
-            token,
-            shouldPublish: !!token
+            token
         };
         (0, helpers_1.logDebug)("context fetched");
         resolve(context);
@@ -18191,6 +18209,12 @@ async function npmCommand(project, ...commandArgs) {
     });
 }
 async function npmPublish(project) {
+    const npmToken = process.env["NPM_TOKEN"];
+    if (!npmToken) {
+        throw new Error("Could not find NPM token.");
+    }
+    await npmCommand(project, 'set', '//registry.npmjs.org/:_authToken', npmToken);
+    await npmCommand(project, 'publish', '--access', 'public');
 }
 async function handleNodeJs() {
     (0, helpers_1.logDebug)('scanning for nodejs projects');

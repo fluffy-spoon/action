@@ -44,43 +44,70 @@ async function dotnetPack(project: Project) {
     });
 }
 
-async function dotnetNuGetPush(project: Project) {    
+async function dotnetNuGetPush(project: Project) {  
+    const nugetToken = process.env["NUGET_TOKEN"];
+    if(!nugetToken) {
+        throw new Error("Could not find NuGet token.");
+    }
+    
     let gitHub = await getGitHubContext();
 
-    let nugetConfigContents = `<?xml version="1.0" encoding="utf-8"?>
+    await dotnetNuGetPushToFeed({
+        feed: `https://nuget.pkg.github.com/${gitHub.owner.login}/index.json`, 
+        username: gitHub.repository.owner.login, 
+        token: gitHub.token, 
+        project
+    });
+
+    await dotnetNuGetPushToFeed({
+        feed: `https://api.nuget.org/v3/index.json`, 
+        username: gitHub.repository.owner.login, 
+        token: nugetToken, 
+        project
+    });
+}
+
+async function dotnetNuGetPushToFeed(options: {
+    feed: string, 
+    username: string, 
+    token: string, 
+    project: Project
+}) {
+    let nugetConfigContents = `
+        <?xml version="1.0" encoding="utf-8"?>
         <configuration>
-        <config>
-            <add key="DefaultPushSource" value="CustomFeed" />
-        </config>
-        <packageSources>
-            <add key="CustomFeed" value="https://nuget.pkg.github.com/${gitHub.owner.login}/index.json" />
-        </packageSources>
-        <packageSourceCredentials>
-            <CustomFeed>
-                <add key="Username" value="${gitHub.repository.owner.login}" />
-                <add key="ClearTextPassword" value="${gitHub.token}" />
-            </CustomFeed>
-        </packageSourceCredentials>
+            <config>
+                <add key="DefaultPushSource" value="CustomFeed" />
+            </config>
+            <packageSources>
+                <add key="CustomFeed" value="${options.feed}" />
+            </packageSources>
+            <packageSourceCredentials>
+                <CustomFeed>
+                    <add key="Username" value="${options.username}" />
+                    <add key="ClearTextPassword" value="${options.token}" />
+                </CustomFeed>
+            </packageSourceCredentials>
         </configuration>`;
 
     logDebug('writing nuget.config', nugetConfigContents);
 
     writeFileSync(
-        join(project.directoryPath, 'nuget.config'),
+        join(options.project.directoryPath, 'nuget.config'),
         nugetConfigContents);
-    
-    logDebug('publishing package', project.nuspecFilePath);
 
-    let version = await getProjectVersion(project);
+    logDebug('publishing package', options.project.nuspecFilePath);
+
+    let version = await getProjectVersion(options.project);
 
     await runProcess("dotnet", [
         "nuget",
         "push",
-        join(project.directoryPath, `${project.name}.${version}.nupkg`),
+        join(options.project.directoryPath, `${options.project.name}.${version}.nupkg`),
         "--api-key",
-        gitHub.token
+        options.token
     ], {
-        cwd: project.directoryPath
+        cwd: options.project.directoryPath
     });
 }
 
