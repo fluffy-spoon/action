@@ -1,3 +1,4 @@
+import { Project } from "../dotnet/project-file-parser";
 import { getGitHubContext } from "../environment";
 import { logDebug, globSearch, runProcess, logInfo } from "../helpers";
 import PackageJsonParser, { NodeJsPackage } from "./package-json-parser";
@@ -16,14 +17,28 @@ async function npmPublish(project: NodeJsPackage) {
         throw new Error("Could not find NPM token.");
     }
 
-    await npmCommand(project, 'set', '//registry.npmjs.org/:_authToken', npmToken);
-    await npmCommand(project, 'set', '@fluffy-spoon:registry', "https://registry.npmjs.org");
-    await npmCommand(project, 'publish', '--access', 'public');
-
+    await pushNpmPackage({
+        project,
+        authToken: npmToken,
+        registry: "registry.npmjs.org"
+    });
+    
     const github = await getGitHubContext();
-    await npmCommand(project, 'set', '//npm.pkg.github.com/:_authToken', github.token);
-    await npmCommand(project, 'set', '@fluffy-spoon:registry', "https://npm.pkg.github.com");
-    await npmCommand(project, 'publish', '--access', 'public');
+    await pushNpmPackage({
+        project,
+        authToken: github.token,
+        registry: "npm.pkg.github.com"
+    });
+}
+
+async function pushNpmPackage(options: {
+    project: NodeJsPackage,
+    authToken: string,
+    registry: string
+}) {
+    await npmCommand(options.project, 'set', `//${options.registry}/:_authToken`, options.authToken);
+    await npmCommand(options.project, 'set', '@fluffy-spoon:registry', `https://${options.registry}`);
+    await npmCommand(options.project, 'publish', '--access', 'public');
 }
 
 export default async function handleNodeJs() {
@@ -38,9 +53,12 @@ export default async function handleNodeJs() {
 
     logInfo('nodejs projects found', packageJsFiles);
 
+    const github = await getGitHubContext();
     for (let packageJsFile of packageJsFiles) {
         let project = PackageJsonParser.readPackage(packageJsFile);
         logInfo('publishing project', packageJsFile, project);
+        
+        await npmCommand(project, 'version', '1.0.0');
         
         await npmCommand(project, 'install');
 

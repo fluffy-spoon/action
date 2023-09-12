@@ -18214,13 +18214,22 @@ async function npmPublish(project) {
     if (!npmToken) {
         throw new Error("Could not find NPM token.");
     }
-    await npmCommand(project, 'set', '//registry.npmjs.org/:_authToken', npmToken);
-    await npmCommand(project, 'set', '@fluffy-spoon:registry', "https://registry.npmjs.org");
-    await npmCommand(project, 'publish', '--access', 'public');
+    await pushNpmPackage({
+        project,
+        authToken: npmToken,
+        registry: "registry.npmjs.org"
+    });
     const github = await (0, environment_1.getGitHubContext)();
-    await npmCommand(project, 'set', '//npm.pkg.github.com/:_authToken', github.token);
-    await npmCommand(project, 'set', '@fluffy-spoon:registry', "https://npm.pkg.github.com");
-    await npmCommand(project, 'publish', '--access', 'public');
+    await pushNpmPackage({
+        project,
+        authToken: github.token,
+        registry: "npm.pkg.github.com"
+    });
+}
+async function pushNpmPackage(options) {
+    await npmCommand(options.project, 'set', `//${options.registry}/:_authToken`, options.authToken);
+    await npmCommand(options.project, 'set', '@fluffy-spoon:registry', `https://${options.registry}`);
+    await npmCommand(options.project, 'publish', '--access', 'public');
 }
 async function handleNodeJs() {
     (0, helpers_1.logDebug)('scanning for nodejs projects');
@@ -18230,9 +18239,11 @@ async function handleNodeJs() {
         .sort((a, b) => b.length - a.length)
         .filter(x => !!packageJsFiles.find(y => y === x || y.indexOf(x) > -1));
     (0, helpers_1.logInfo)('nodejs projects found', packageJsFiles);
+    const github = await (0, environment_1.getGitHubContext)();
     for (let packageJsFile of packageJsFiles) {
         let project = package_json_parser_1.default.readPackage(packageJsFile);
         (0, helpers_1.logInfo)('publishing project', packageJsFile, project);
+        await npmCommand(project, 'version', '1.0.0');
         await npmCommand(project, 'install');
         if (project.hasBuildCommand)
             await npmCommand(project, 'run', 'build');
