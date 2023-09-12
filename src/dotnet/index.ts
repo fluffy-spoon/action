@@ -88,7 +88,7 @@ async function dotnetNuGetPushToFeed(options: {
                     <add key="ClearTextPassword" value="${options.token}" />
                 </CustomFeed>
             </packageSourceCredentials>
-        </configuration>`;
+        </configuration>`.trim();
 
     logDebug('writing nuget.config', nugetConfigContents);
 

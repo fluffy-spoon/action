@@ -17807,7 +17807,7 @@ async function dotnetNuGetPushToFeed(options) {
                     <add key="ClearTextPassword" value="${options.token}" />
                 </CustomFeed>
             </packageSourceCredentials>
-        </configuration>`;
+        </configuration>`.trim();
     (0, helpers_1.logDebug)('writing nuget.config', nugetConfigContents);
     (0, fs_1.writeFileSync)((0, path_1.join)(options.project.directoryPath, 'nuget.config'), nugetConfigContents);
     (0, helpers_1.logDebug)('publishing package', options.project.nuspecFilePath);
