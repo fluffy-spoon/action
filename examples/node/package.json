@@ -1,7 +1,7 @@
 {
-  "name": "node",
+  "name": "@fluffy-spoon/noop",
   "version": "1.0.0",
-  "description": "",
+  "description": "A no-op library. Doesn't do anything.",
   "main": "index.js",
   "scripts": {
     "test": "echo test script was invoked",
